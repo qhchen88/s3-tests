@@ -18,6 +18,7 @@ ssl_verify = False
 ## {random} will be filled with random characters to pad
 ## the prefix to 30 characters long, and avoid collisions
 bucket prefix = yournamehere-{random}-
+bucket prefix = yourcosappidhere
 
 [s3 main]
 # main display_name set in vstart.sh

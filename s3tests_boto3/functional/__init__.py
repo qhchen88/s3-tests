@@ -19,6 +19,7 @@ config = munch.Munch
 
 # this will be assigned by setup()
 prefix = None
+tail = None
 
 def get_prefix():
     assert prefix is not None
@@ -195,6 +196,7 @@ def setup():
         raise RuntimeError('Your config file is missing the "s3 tenant" section!')
 
     global prefix
+    global tail
 
     defaults = cfg.defaults()
 
@@ -266,6 +268,11 @@ def setup():
     except (configparser.NoOptionError):
         template = 'test-{random}-'
     prefix = choose_bucket_prefix(template=template)
+
+    try:
+        tail = cfg.get("fixtures", 'bucket tail')
+    except (configparser.NoSectionError, configparser.NoOptionError):
+        tail = ''
 
     alt_client = get_alt_client()
     tenant_client = get_tenant_client()
@@ -556,9 +563,10 @@ def get_new_bucket_name():
     bucket by this name happens to exist, it's ok if tests give
     false negatives.
     """
-    name = '{prefix}{num}'.format(
+    name = '{prefix}{num}-{tail}'.format(
         prefix=prefix,
         num=next(bucket_counter),
+        tail=tail,
         )
     return name
 
