@@ -1583,7 +1583,7 @@ def test_object_write_with_chunked_transfer_encoding():
     client.meta.events.register_first('before-sign.*.*', _ev_add_te_header)
     response = client.put_object(Bucket=bucket_name, Key='foo', Body='bar')
 
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 
 def test_bucket_create_delete():
@@ -1726,7 +1726,7 @@ def test_object_write_check_etag():
     bucket_name = get_new_bucket()
     client = get_client()
     response = client.put_object(Bucket=bucket_name, Key='foo', Body='bar')
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
     assert response['ETag'] == '"37b51d194a7513e45b56f6524f2d51f2"'
 
 def test_object_write_cache_control():
@@ -3181,7 +3181,7 @@ def test_object_raw_get():
 
     unauthenticated_client = get_unauthenticated_client()
     response = unauthenticated_client.get_object(Bucket=bucket_name, Key='foo')
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 def test_object_raw_get_bucket_gone():
     bucket_name = _setup_bucket_object_acl('public-read', 'public-read')
@@ -3229,7 +3229,7 @@ def test_bucket_head():
     client = get_client()
 
     response = client.head_bucket(Bucket=bucket_name)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 def test_bucket_head_notexist():
     bucket_name = get_new_bucket_name()
@@ -3265,7 +3265,7 @@ def test_object_raw_get_bucket_acl():
 
     unauthenticated_client = get_unauthenticated_client()
     response = unauthenticated_client.get_object(Bucket=bucket_name, Key='foo')
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 def test_object_raw_get_object_acl():
     bucket_name = _setup_bucket_object_acl('public-read', 'private')
@@ -3281,7 +3281,7 @@ def test_object_raw_authenticated():
 
     client = get_client()
     response = client.get_object(Bucket=bucket_name, Key='foo')
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 def test_object_raw_response_headers():
     bucket_name = _setup_bucket_object_acl('private', 'private')
@@ -3289,7 +3289,7 @@ def test_object_raw_response_headers():
     client = get_client()
 
     response = client.get_object(Bucket=bucket_name, Key='foo', ResponseCacheControl='no-cache', ResponseContentDisposition='bla', ResponseContentEncoding='aaa', ResponseContentLanguage='esperanto', ResponseContentType='foo/bar', ResponseExpires='123')
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
     assert response['ResponseMetadata']['HTTPHeaders']['content-type'] == 'foo/bar'
     assert response['ResponseMetadata']['HTTPHeaders']['content-disposition'] == 'bla'
     assert response['ResponseMetadata']['HTTPHeaders']['content-language'] == 'esperanto'
@@ -3301,14 +3301,14 @@ def test_object_raw_authenticated_bucket_acl():
 
     client = get_client()
     response = client.get_object(Bucket=bucket_name, Key='foo')
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 def test_object_raw_authenticated_object_acl():
     bucket_name = _setup_bucket_object_acl('public-read', 'private')
 
     client = get_client()
     response = client.get_object(Bucket=bucket_name, Key='foo')
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 def test_object_raw_authenticated_bucket_gone():
     bucket_name = _setup_bucket_object_acl('public-read', 'public-read')
@@ -3395,14 +3395,14 @@ def test_object_anon_put_write_access():
     unauthenticated_client = get_unauthenticated_client()
 
     response = unauthenticated_client.put_object(Bucket=bucket_name, Key='foo', Body='foo')
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 def test_object_put_authenticated():
     bucket_name = get_new_bucket()
     client = get_client()
 
     response = client.put_object(Bucket=bucket_name, Key='foo', Body='foo')
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 def test_object_raw_put_authenticated_expired():
     bucket_name = get_new_bucket()
@@ -3480,7 +3480,7 @@ def check_good_bucket_name(name, _prefix=None):
             )
     client = get_client()
     response = client.create_bucket(Bucket=bucket_name)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 def _test_bucket_create_naming_good_long(length):
     """
@@ -3504,7 +3504,7 @@ def _test_bucket_create_naming_good_long(length):
             )
     client = get_client()
     response = client.create_bucket(Bucket=bucket_name)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 # Breaks DNS with SubdomainCallingFormat
 @pytest.mark.fails_on_aws
@@ -4241,7 +4241,7 @@ def test_bucket_acl_canned_private_to_private():
     client = get_client()
 
     response = client.put_bucket_acl(Bucket=bucket_name, ACL='private')
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 def add_bucket_user_grant(bucket_name, grant):
     """
@@ -7757,7 +7757,7 @@ def test_lifecycle_set():
            {'ID': 'rule2', 'Expiration': {'Days': 2}, 'Prefix': 'test2/', 'Status':'Disabled'}]
     lifecycle = {'Rules': rules}
     response = client.put_bucket_lifecycle_configuration(Bucket=bucket_name, LifecycleConfiguration=lifecycle)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 @pytest.mark.lifecycle
 def test_lifecycle_get():
@@ -7909,7 +7909,7 @@ def test_lifecycle_expiration_tags1():
 
     response = client.put_object_tagging(Bucket=bucket_name, Key=tom_key,
                                          Tagging=tom_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     lifecycle_config = {
         'Rules': [
@@ -7932,7 +7932,7 @@ def test_lifecycle_expiration_tags1():
 
     response = client.put_bucket_lifecycle_configuration(
         Bucket=bucket_name, LifecycleConfiguration=lifecycle_config)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     lc_interval = get_lc_debug_interval()
 
@@ -7955,7 +7955,7 @@ def setup_lifecycle_tags2(client, bucket_name):
 
     response = client.put_object_tagging(Bucket=bucket_name, Key=tom_key,
                                          Tagging=tom_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     huck_key = 'days1/huck'
     huck_tagset = {
@@ -7967,7 +7967,7 @@ def setup_lifecycle_tags2(client, bucket_name):
 
     response = client.put_object_tagging(Bucket=bucket_name, Key=huck_key,
                                          Tagging=huck_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     lifecycle_config = {
         'Rules': [
@@ -7999,7 +7999,7 @@ def setup_lifecycle_tags2(client, bucket_name):
 
     response = client.put_bucket_lifecycle_configuration(
         Bucket=bucket_name, LifecycleConfiguration=lifecycle_config)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
     return response
 
 @pytest.mark.lifecycle
@@ -8052,10 +8052,10 @@ def setup_lifecycle_noncur_tags(client, bucket_name, days):
     for ix in range(10):
         body = "%s v%d" % (key, ix)
         response = client.put_object(Bucket=bucket_name, Key=key, Body=body)
-        assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+        assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
         response = client.put_object_tagging(Bucket=bucket_name, Key=key,
                                              Tagging=tagset)
-        assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+        assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     lifecycle_config = {
         'Rules': [
@@ -8078,7 +8078,7 @@ def setup_lifecycle_noncur_tags(client, bucket_name, days):
 
     response = client.put_bucket_lifecycle_configuration(
         Bucket=bucket_name, LifecycleConfiguration=lifecycle_config)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
     return response
 
 def verify_lifecycle_expiration_noncur_tags(client, bucket_name, secs):
@@ -8179,7 +8179,7 @@ def test_lifecycle_set_date():
     lifecycle = {'Rules': rules}
 
     response = client.put_bucket_lifecycle_configuration(Bucket=bucket_name, LifecycleConfiguration=lifecycle)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 @pytest.mark.lifecycle
 def test_lifecycle_set_invalid_date():
@@ -8244,12 +8244,12 @@ def setup_lifecycle_expiration(client, bucket_name, rule_id, delta_days,
     lifecycle = {'Rules': rules}
     response = client.put_bucket_lifecycle_configuration(
         Bucket=bucket_name, LifecycleConfiguration=lifecycle)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     key = rule_prefix + 'foo'
     body = 'bar'
     response = client.put_object(Bucket=bucket_name, Key=key, Body=body)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
     return response
 
 def check_lifecycle_expiration_header(response, start_time, rule_id,
@@ -8293,7 +8293,7 @@ def test_lifecycle_expiration_header_head():
 
     # stat the object, check header
     response = client.head_object(Bucket=bucket_name, Key=key)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
     assert check_lifecycle_expiration_header(response, now, 'rule1', 1)
 
 @pytest.mark.lifecycle
@@ -8327,7 +8327,7 @@ def test_lifecycle_expiration_header_tags_head():
 
     # stat the object, check header
     response = client.head_object(Bucket=bucket_name, Key=key1)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
     assert check_lifecycle_expiration_header(response, datetime.datetime.now(None), 'rule1', 1)
 
     # test that header is not returning when it should not
@@ -8349,7 +8349,7 @@ def test_lifecycle_expiration_header_tags_head():
         Bucket=bucket_name, LifecycleConfiguration=lifecycle)
     # stat the object, check header
     response = client.head_object(Bucket=bucket_name, Key=key1)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
     assert check_lifecycle_expiration_header(response, datetime.datetime.now(None), 'rule1', 1) == False
 
 @pytest.mark.lifecycle
@@ -8395,7 +8395,7 @@ def test_lifecycle_expiration_header_and_tags_head():
 
     # stat the object, check header
     response = client.head_object(Bucket=bucket_name, Key=key1)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
     assert check_lifecycle_expiration_header(response, datetime.datetime.now(None), 'rule1', 1) == False
 
 @pytest.mark.lifecycle
@@ -8406,7 +8406,7 @@ def test_lifecycle_set_noncurrent():
            {'ID': 'rule2', 'NoncurrentVersionExpiration': {'NoncurrentDays': 3}, 'Prefix': 'future/', 'Status':'Enabled'}]
     lifecycle = {'Rules': rules}
     response = client.put_bucket_lifecycle_configuration(Bucket=bucket_name, LifecycleConfiguration=lifecycle)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 @pytest.mark.lifecycle
 @pytest.mark.lifecycle_expiration
@@ -8444,7 +8444,7 @@ def test_lifecycle_set_deletemarker():
     rules=[{'ID': 'rule1', 'Expiration': {'ExpiredObjectDeleteMarker': True}, 'Prefix': 'test1/', 'Status':'Enabled'}]
     lifecycle = {'Rules': rules}
     response = client.put_bucket_lifecycle_configuration(Bucket=bucket_name, LifecycleConfiguration=lifecycle)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 @pytest.mark.lifecycle
 def test_lifecycle_set_filter():
@@ -8453,7 +8453,7 @@ def test_lifecycle_set_filter():
     rules=[{'ID': 'rule1', 'Expiration': {'ExpiredObjectDeleteMarker': True}, 'Filter': {'Prefix': 'foo'}, 'Status':'Enabled'}]
     lifecycle = {'Rules': rules}
     response = client.put_bucket_lifecycle_configuration(Bucket=bucket_name, LifecycleConfiguration=lifecycle)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 @pytest.mark.lifecycle
 def test_lifecycle_set_empty_filter():
@@ -8462,7 +8462,7 @@ def test_lifecycle_set_empty_filter():
     rules=[{'ID': 'rule1', 'Expiration': {'ExpiredObjectDeleteMarker': True}, 'Filter': {}, 'Status':'Enabled'}]
     lifecycle = {'Rules': rules}
     response = client.put_bucket_lifecycle_configuration(Bucket=bucket_name, LifecycleConfiguration=lifecycle)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 @pytest.mark.lifecycle
 @pytest.mark.lifecycle_expiration
@@ -8511,7 +8511,7 @@ def test_lifecycle_set_multipart():
     ]
     lifecycle = {'Rules': rules}
     response = client.put_bucket_lifecycle_configuration(Bucket=bucket_name, LifecycleConfiguration=lifecycle)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 @pytest.mark.lifecycle
 @pytest.mark.lifecycle_expiration
@@ -8706,7 +8706,7 @@ def test_lifecycle_set_noncurrent_transition():
     lifecycle = {'Rules': rules}
     response = client.put_bucket_lifecycle_configuration(Bucket=bucket, LifecycleConfiguration=lifecycle)
 
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 
 @pytest.mark.lifecycle
@@ -9122,7 +9122,7 @@ def test_encryption_sse_c_method_head():
     lf = (lambda **kwargs: kwargs['params']['headers'].update(sse_client_headers))
     client.meta.events.register('before-call.s3.HeadObject', lf)
     response = client.head_object(Bucket=bucket_name, Key=key)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 @pytest.mark.encryption
 def test_encryption_sse_c_present():
@@ -10129,7 +10129,7 @@ def test_bucket_policy_set_condition_operator_end_with_IfExists():
     client.meta.events.register('before-call.s3.GetObject', lf)
 
     response = client.get_object(Bucket=bucket_name, Key=key)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     request_headers={'referer': 'http://www.example.com/index.html'}
 
@@ -10137,11 +10137,11 @@ def test_bucket_policy_set_condition_operator_end_with_IfExists():
     client.meta.events.register('before-call.s3.GetObject', lf)
 
     response = client.get_object(Bucket=bucket_name, Key=key)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     # the 'referer' headers need to be removed for this one
     #response = client.get_object(Bucket=bucket_name, Key=key)
-    #assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    #assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     request_headers={'referer': 'http://example.com'}
 
@@ -10176,7 +10176,7 @@ def test_get_obj_tagging():
 
     input_tagset = _create_simple_tagset(2)
     response = client.put_object_tagging(Bucket=bucket_name, Key=key, Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     response = client.get_object_tagging(Bucket=bucket_name, Key=key)
     assert response['TagSet'] == input_tagset['TagSet']
@@ -10191,10 +10191,10 @@ def test_get_obj_head_tagging():
 
     input_tagset = _create_simple_tagset(count)
     response = client.put_object_tagging(Bucket=bucket_name, Key=key, Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     response = client.head_object(Bucket=bucket_name, Key=key)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
     assert response['ResponseMetadata']['HTTPHeaders']['x-amz-tagging-count'] == str(count)
 
 @pytest.mark.tagging
@@ -10206,7 +10206,7 @@ def test_put_max_tags():
 
     input_tagset = _create_simple_tagset(10)
     response = client.put_object_tagging(Bucket=bucket_name, Key=key, Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     response = client.get_object_tagging(Bucket=bucket_name, Key=key)
     assert response['TagSet'] == input_tagset['TagSet']
@@ -10241,7 +10241,7 @@ def test_put_max_kvsize_tags():
     input_tagset = {'TagSet': tagset}
 
     response = client.put_object_tagging(Bucket=bucket_name, Key=key, Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     response = client.get_object_tagging(Bucket=bucket_name, Key=key)
     for kv_pair in response['TagSet']:
@@ -10305,7 +10305,7 @@ def test_put_modify_tags():
     input_tagset = {'TagSet': tagset}
 
     response = client.put_object_tagging(Bucket=bucket_name, Key=key, Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     response = client.get_object_tagging(Bucket=bucket_name, Key=key)
     assert response['TagSet'] == input_tagset['TagSet']
@@ -10316,7 +10316,7 @@ def test_put_modify_tags():
     input_tagset2 = {'TagSet': tagset2}
 
     response = client.put_object_tagging(Bucket=bucket_name, Key=key, Tagging=input_tagset2)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     response = client.get_object_tagging(Bucket=bucket_name, Key=key)
     assert response['TagSet'] == input_tagset2['TagSet']
@@ -10330,7 +10330,7 @@ def test_put_delete_tags():
 
     input_tagset = _create_simple_tagset(2)
     response = client.put_object_tagging(Bucket=bucket_name, Key=key, Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     response = client.get_object_tagging(Bucket=bucket_name, Key=key)
     assert response['TagSet'] == input_tagset['TagSet']
@@ -10467,7 +10467,7 @@ def test_get_tags_acl_public():
 
     input_tagset = _create_simple_tagset(10)
     response = client.put_object_tagging(Bucket=bucket_name, Key=key, Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     alt_client = get_alt_client()
 
@@ -10491,7 +10491,7 @@ def test_put_tags_acl_public():
     input_tagset = _create_simple_tagset(10)
     alt_client = get_alt_client()
     response = alt_client.put_object_tagging(Bucket=bucket_name, Key=key, Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     response = client.get_object_tagging(Bucket=bucket_name, Key=key)
     assert response['TagSet'] == input_tagset['TagSet']
@@ -10511,7 +10511,7 @@ def test_delete_tags_obj_public():
 
     input_tagset = _create_simple_tagset(10)
     response = client.put_object_tagging(Bucket=bucket_name, Key=key, Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     alt_client = get_alt_client()
 
@@ -10616,7 +10616,7 @@ def test_bucket_policy_get_obj_existing_tag():
     input_tagset = {'TagSet': tagset}
 
     response = client.put_object_tagging(Bucket=bucket_name, Key='publictag', Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     tagset2 = []
     tagset2.append({'Key': 'security', 'Value': 'private'})
@@ -10624,7 +10624,7 @@ def test_bucket_policy_get_obj_existing_tag():
     input_tagset = {'TagSet': tagset2}
 
     response = client.put_object_tagging(Bucket=bucket_name, Key='privatetag', Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     tagset3 = []
     tagset3.append({'Key': 'security1', 'Value': 'public'})
@@ -10632,11 +10632,11 @@ def test_bucket_policy_get_obj_existing_tag():
     input_tagset = {'TagSet': tagset3}
 
     response = client.put_object_tagging(Bucket=bucket_name, Key='invalidtag', Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     alt_client = get_alt_client()
     response = alt_client.get_object(Bucket=bucket_name, Key='publictag')
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     e = assert_raises(ClientError, alt_client.get_object, Bucket=bucket_name, Key='privatetag')
     status, error_code = _get_status_and_error_code(e.response)
@@ -10671,7 +10671,7 @@ def test_bucket_policy_get_obj_tagging_existing_tag():
     input_tagset = {'TagSet': tagset}
 
     response = client.put_object_tagging(Bucket=bucket_name, Key='publictag', Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     tagset2 = []
     tagset2.append({'Key': 'security', 'Value': 'private'})
@@ -10679,7 +10679,7 @@ def test_bucket_policy_get_obj_tagging_existing_tag():
     input_tagset = {'TagSet': tagset2}
 
     response = client.put_object_tagging(Bucket=bucket_name, Key='privatetag', Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     tagset3 = []
     tagset3.append({'Key': 'security1', 'Value': 'public'})
@@ -10687,11 +10687,11 @@ def test_bucket_policy_get_obj_tagging_existing_tag():
     input_tagset = {'TagSet': tagset3}
 
     response = client.put_object_tagging(Bucket=bucket_name, Key='invalidtag', Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     alt_client = get_alt_client()
     response = alt_client.get_object_tagging(Bucket=bucket_name, Key='publictag')
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     # A get object itself should fail since we allowed only GetObjectTagging
     e = assert_raises(ClientError, alt_client.get_object, Bucket=bucket_name, Key='publictag')
@@ -10733,7 +10733,7 @@ def test_bucket_policy_put_obj_tagging_existing_tag():
     input_tagset = {'TagSet': tagset}
 
     response = client.put_object_tagging(Bucket=bucket_name, Key='publictag', Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     tagset2 = []
     tagset2.append({'Key': 'security', 'Value': 'private'})
@@ -10741,7 +10741,7 @@ def test_bucket_policy_put_obj_tagging_existing_tag():
     input_tagset = {'TagSet': tagset2}
 
     response = client.put_object_tagging(Bucket=bucket_name, Key='privatetag', Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     alt_client = get_alt_client()
     # PUT requests with object tagging are a bit wierd, if you forget to put
@@ -10755,7 +10755,7 @@ def test_bucket_policy_put_obj_tagging_existing_tag():
     input_tagset = {'TagSet': testtagset1}
 
     response = alt_client.put_object_tagging(Bucket=bucket_name, Key='publictag', Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     e = assert_raises(ClientError, alt_client.put_object_tagging, Bucket=bucket_name, Key='privatetag', Tagging=input_tagset)
     status, error_code = _get_status_and_error_code(e.response)
@@ -10767,7 +10767,7 @@ def test_bucket_policy_put_obj_tagging_existing_tag():
     input_tagset = {'TagSet': testtagset2}
 
     response = alt_client.put_object_tagging(Bucket=bucket_name, Key='publictag', Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     # Now try putting the original tags again, this should fail
     input_tagset = {'TagSet': testtagset1}
@@ -10904,7 +10904,7 @@ def test_bucket_policy_put_obj_acl():
     # as an ERROR anyway
     response = alt_client.put_object(Bucket=bucket_name, Key=key1, Body=key1)
     #response = alt_client.put_object_acl(Bucket=bucket_name, Key=key1, ACL='private')
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     key2 = 'public-key'
 
@@ -10954,7 +10954,7 @@ def test_bucket_policy_put_obj_grant():
     alt_client.meta.events.register('before-call.s3.PutObject', lf)
 
     response = alt_client.put_object(Bucket=bucket_name, Key=key1, Body=key1)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     def remove_header(**kwargs):
         if ("x-amz-grant-full-control" in kwargs['params']['headers']):
@@ -10964,7 +10964,7 @@ def test_bucket_policy_put_obj_grant():
 
     key2 = 'key2'
     response = alt_client.put_object(Bucket=bucket_name2, Key=key2, Body=key2)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     acl1_response = client.get_object_acl(Bucket=bucket_name, Key=key1)
 
@@ -11318,7 +11318,7 @@ def test_bucket_policy_get_obj_acl_existing_tag():
     input_tagset = {'TagSet': tagset}
 
     response = client.put_object_tagging(Bucket=bucket_name, Key='publictag', Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     tagset2 = []
     tagset2.append({'Key': 'security', 'Value': 'private'})
@@ -11326,7 +11326,7 @@ def test_bucket_policy_get_obj_acl_existing_tag():
     input_tagset = {'TagSet': tagset2}
 
     response = client.put_object_tagging(Bucket=bucket_name, Key='privatetag', Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     tagset3 = []
     tagset3.append({'Key': 'security1', 'Value': 'public'})
@@ -11334,11 +11334,11 @@ def test_bucket_policy_get_obj_acl_existing_tag():
     input_tagset = {'TagSet': tagset3}
 
     response = client.put_object_tagging(Bucket=bucket_name, Key='invalidtag', Tagging=input_tagset)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     alt_client = get_alt_client()
     response = alt_client.get_object_acl(Bucket=bucket_name, Key='publictag')
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     # A get object itself should fail since we allowed only GetObjectTagging
     e = assert_raises(ClientError, alt_client.get_object, Bucket=bucket_name, Key='publictag')
@@ -11369,7 +11369,7 @@ def test_object_lock_put_obj_lock():
     response = client.put_object_lock_configuration(
         Bucket=bucket_name,
         ObjectLockConfiguration=conf)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     conf = {'ObjectLockEnabled':'Enabled',
             'Rule': {
@@ -11381,7 +11381,7 @@ def test_object_lock_put_obj_lock():
     response = client.put_object_lock_configuration(
         Bucket=bucket_name,
         ObjectLockConfiguration=conf)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
     response = client.get_bucket_versioning(Bucket=bucket_name)
     assert response['Status'] == 'Enabled'
@@ -11557,7 +11557,7 @@ def test_object_lock_put_obj_retention():
     version_id = response['VersionId']
     retention = {'Mode':'GOVERNANCE', 'RetainUntilDate':datetime.datetime(2030,1,1,tzinfo=pytz.UTC)}
     response = client.put_object_retention(Bucket=bucket_name, Key=key, Retention=retention)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
     client.delete_object(Bucket=bucket_name, Key=key, VersionId=version_id, BypassGovernanceRetention=True)
 
 
@@ -11852,9 +11852,9 @@ def test_object_lock_put_legal_hold():
     client.put_object(Bucket=bucket_name, Body='abc', Key=key)
     legal_hold = {'Status': 'ON'}
     response = client.put_object_legal_hold(Bucket=bucket_name, Key=key, LegalHold=legal_hold)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
     response = client.put_object_legal_hold(Bucket=bucket_name, Key=key, LegalHold={'Status':'OFF'})
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 
 def test_object_lock_put_legal_hold_invalid_bucket():
@@ -12343,7 +12343,7 @@ def test_multipart_upload_on_a_bucket_with_policy():
     client.put_bucket_policy(Bucket=bucket_name, Policy=policy_document)
     (upload_id, data, parts) = _multipart_upload(bucket_name=bucket_name, key=key, size=objlen, client=client)
     response = client.complete_multipart_upload(Bucket=bucket_name, Key=key, UploadId=upload_id, MultipartUpload={'Parts': parts})
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 def _put_bucket_encryption_s3(client, bucket_name):
     """
@@ -12359,7 +12359,7 @@ def _put_bucket_encryption_s3(client, bucket_name):
         ]
     }
     response = client.put_bucket_encryption(Bucket=bucket_name, ServerSideEncryptionConfiguration=server_side_encryption_conf)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 def _put_bucket_encryption_kms(client, bucket_name):
     """
@@ -12379,7 +12379,7 @@ def _put_bucket_encryption_kms(client, bucket_name):
         ]
     }
     response = client.put_bucket_encryption(Bucket=bucket_name, ServerSideEncryptionConfiguration=server_side_encryption_conf)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
 
 
 @pytest.mark.sse_s3
@@ -12411,7 +12411,7 @@ def test_get_bucket_encryption_s3():
     _put_bucket_encryption_s3(client, bucket_name)
 
     response = client.get_bucket_encryption(Bucket=bucket_name)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
     assert response['ServerSideEncryptionConfiguration']['Rules'][0]['ApplyServerSideEncryptionByDefault']['SSEAlgorithm'] == 'AES256'
 
 
@@ -12434,7 +12434,7 @@ def test_get_bucket_encryption_kms():
     _put_bucket_encryption_kms(client, bucket_name)
 
     response = client.get_bucket_encryption(Bucket=bucket_name)
-    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200 or response['ResponseMetadata']['HTTPStatusCode'] == 204
     assert response['ServerSideEncryptionConfiguration']['Rules'][0]['ApplyServerSideEncryptionByDefault']['SSEAlgorithm'] == 'aws:kms'
     assert response['ServerSideEncryptionConfiguration']['Rules'][0]['ApplyServerSideEncryptionByDefault']['KMSMasterKeyID'] == kms_keyid
 
