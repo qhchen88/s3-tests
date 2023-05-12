@@ -22,15 +22,18 @@ Once you have that file copied and edited, you can run the tests with::
 
 You can specify which directory of tests to run::
 
-	S3TEST_CONF=your.conf tox s3tests_boto3/functional
+	S3TEST_CONF=your.conf tox -- s3tests_boto3/functional
 
 You can specify which file of tests to run::
 
-	S3TEST_CONF=your.conf tox s3tests_boto3/functional/test_s3.py
+	S3TEST_CONF=your.conf tox -- s3tests_boto3/functional/test_s3.py
 
 You can specify which test to run::
 
-	S3TEST_CONF=your.conf tox s3tests_boto3/functional/test_s3.py::test_bucket_list_empty
+	S3TEST_CONF=your.conf tox -- s3tests_boto3/functional/test_s3.py::test_bucket_list_empty
+
+You can specify which kind of test to run::
+	S3TEST_CONF=your.conf tox -- s3tests_boto3/functional/test_s3.py -k "test_bucket_list"
 
 Some tests have attributes set based on their current reliability and
 things like AWS not enforcing their spec stricly. You can filter tests
